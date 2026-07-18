@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/entities")
+@RequestMapping("/warehouse/entities")
 @RequiredArgsConstructor
 public class ValidationController {
 
