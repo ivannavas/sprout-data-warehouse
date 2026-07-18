@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: sprout-data-warehouse
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/sprout_data_warehouse}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+
+ollama:
+  model:
+    name: ${OLLAMA_MODEL:llama3.1}
+  timeout:
+    seconds: 300
+  embedding:
+    model:
+      name: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+
+pgvector:
+  url: ${DB_URL:jdbc:postgresql://localhost:5432/sprout_data_warehouse}
+  username: ${DB_USERNAME:postgres}
+  password: ${DB_PASSWORD:postgres}
+  table: sprout_documents
+  dimension: 768
+
+daily:
+  transcriptions:
+    path: ${DAILY_TRANSCRIPTIONS_PATH:C:/audio-diary}
+
+logging:
+  level:
+    io.github.ivannavas: INFO
