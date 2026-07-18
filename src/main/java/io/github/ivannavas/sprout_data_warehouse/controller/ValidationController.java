@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +26,9 @@ public class ValidationController {
 
     @PatchMapping("/{type}/{id}/validate")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void validate(@PathVariable String type, @PathVariable Long id) {
-        validationService.validate(type, id);
+    public void validate(@PathVariable String type, @PathVariable Long id,
+                         @RequestBody(required = false) Map<String, Object> changes) {
+        validationService.validate(type, id, changes);
     }
 
     @GetMapping("/pending")

@@ -22,23 +22,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * Walks the audio-diary export ({@code <root>/<year>/<month>/<day>/}) and feeds each day's transcription
- * to the agent.
- *
- * <p>Ingesting a day leaves a {@value #REMOVAL_MARKER} file behind in its folder. The day is not deleted
- * there and then: the <em>next</em> run finds the marker, skips the ingestion and deletes the folder,
- * pruning the folders above it as they are left empty. The two passes are deliberate — a day is only
- * destroyed after a later run has seen it safely ingested.
- *
- * <p>The root is never deleted: it is the fixed drop point the exports land in, so it has to survive an
- * empty tree. Everything below it belongs to an export and goes once nothing is left in it.
- */
+
 @Component
 @Slf4j
 public class DailyTranscriptionIngestor {
 
-    /** Written into a day's folder once it has been ingested; its presence means "delete me next pass". */
     static final String REMOVAL_MARKER = "marked-for-removal";
 
     private static final String TRANSCRIPTION_PREFIX = "fullday-";
@@ -49,7 +37,6 @@ public class DailyTranscriptionIngestor {
     private final DataExtractorAgent dataExtractorAgent;
     private final Retriever retriever;
 
-    // One run at a time: the cron, the startup event and a manual trigger all land here.
     private final AtomicBoolean running = new AtomicBoolean();
     private volatile boolean stopRequested;
     private volatile String currentDay;
@@ -57,7 +44,6 @@ public class DailyTranscriptionIngestor {
     private volatile Instant finishedAt;
     private volatile IngestionStatus.Outcome lastOutcome;
 
-    // Only ever touched by the thread holding the run, so plain fields are enough.
     private int daysIngested;
     private int daysDeleted;
     private int daysFailed;
