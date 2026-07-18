@@ -8,6 +8,8 @@ import io.github.ivannavas.sprout.pgvector.PgVectorStore;
 import io.github.ivannavas.sprout.rag.Retriever;
 import io.github.ivannavas.sprout_data_warehouse.agent.DataExtractorAgent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.File;
@@ -35,6 +37,7 @@ public class DailyTranscriptionIngestor {
     }
 
     @Scheduled(cron = "0 0 13 * * *")
+    @EventListener(ApplicationReadyEvent.class)
     public void scheduledTask() {
         File sourceDir = new File(dailyTranscriptionsPath);
 
