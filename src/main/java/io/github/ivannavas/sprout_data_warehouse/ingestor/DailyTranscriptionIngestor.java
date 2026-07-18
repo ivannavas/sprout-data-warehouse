@@ -18,6 +18,8 @@ import java.nio.file.Files;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -110,27 +112,62 @@ public class DailyTranscriptionIngestor {
             return;
         }
 
-        for (File yearDir : directories(root)) {
-            for (File monthDir : directories(yearDir)) {
-                for (File dayDir : directories(monthDir)) {
-                    if (stopRequested) {
-                        return;
-                    }
-                    currentDay = dayDir.getAbsolutePath();
-                    processDay(dayDir, monthDir, yearDir);
-                }
+        walk(root, root, new ArrayDeque<>());
+    }
+
+    /**
+     * Descends until it reaches the folders that actually hold transcriptions, instead of counting levels: the
+     * export wraps its year/month/day tree in a folder of its own (AudioDiary_2026-04-13), and how many wrappers
+     * sit on top is not something the ingestion should have to know.
+     *
+     * <p>{@code ancestors} collects the folders walked through on the way down, innermost first, so a day that is
+     * removed can take with it the folders it just emptied. The root is deliberately kept out: it is never pruned.
+     */
+    private void walk(File dir, File root, Deque<File> ancestors) {
+        if (stopRequested) {
+            return;
+        }
+        if (isDay(dir)) {
+            currentDay = dir.getAbsolutePath();
+            processDay(dir, ancestors.toArray(File[]::new));
+            return;
+        }
+
+        boolean prunable = dir != root;
+        if (prunable) {
+            ancestors.push(dir);
+        }
+        for (File child : directories(dir)) {
+            walk(child, root, ancestors);
+            if (stopRequested) {
+                break;
             }
+        }
+        if (prunable) {
+            ancestors.pop();
         }
     }
 
-    private void processDay(File dayDir, File monthDir, File yearDir) {
+    /** A folder is a day when it holds transcriptions, or the marker left by the pass that ingested them. */
+    private static boolean isDay(File dir) {
+        if (new File(dir, REMOVAL_MARKER).exists()) {
+            return true;
+        }
+        for (File file : files(dir)) {
+            if (isTranscription(file)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void processDay(File dayDir, File... prunableAncestors) {
         if (new File(dayDir, REMOVAL_MARKER).exists()) {
             // Ingested on an earlier pass: this is the pass that removes it.
             if (deleteRecursively(dayDir)) {
                 daysDeleted++;
                 log.info("Deleted ingested day {}", dayDir.getName());
-                // The root is deliberately absent from the chain: it is never pruned.
-                pruneIfEmpty(monthDir, yearDir);
+                pruneIfEmpty(prunableAncestors);
             } else {
                 daysFailed++;
                 log.error("Could not delete day marked for removal: {}", dayDir.getAbsolutePath());
