@@ -28,8 +28,9 @@ whether a chart or an answer draws only on what I have confirmed, or on everythi
 
 ## Running it
 
-Java 21 and Spring Boot, against PostgreSQL with pgvector and a local Ollama. Everything runs on my own
-machine: this is personal data and it does not leave it.
+Java 21 and Spring Boot, against PostgreSQL with pgvector. The database stays on my own machine, but the
+extraction runs on Anthropic's API (Claude) and the embeddings on Voyage: the transcriptions themselves
+do leave the machine.
 
 Configuration is in `application.yml`, which has local defaults and reads the database, model and source
 locations from the environment.

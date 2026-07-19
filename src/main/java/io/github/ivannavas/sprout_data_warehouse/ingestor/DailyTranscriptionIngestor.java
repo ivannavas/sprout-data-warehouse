@@ -3,7 +3,7 @@ package io.github.ivannavas.sprout_data_warehouse.ingestor;
 import io.github.ivannavas.sprout.annotation.Component;
 import io.github.ivannavas.sprout.annotation.Value;
 import io.github.ivannavas.sprout.model.Document;
-import io.github.ivannavas.sprout.ollama.embedding.OllamaEmbeddingModel;
+import io.github.ivannavas.sprout.anthropic.embedding.VoyageEmbeddingModel;
 import io.github.ivannavas.sprout.pgvector.PgVectorStore;
 import io.github.ivannavas.sprout.rag.Retriever;
 import io.github.ivannavas.sprout_data_warehouse.agent.DataExtractorAgent;
@@ -49,11 +49,11 @@ public class DailyTranscriptionIngestor {
 
     public DailyTranscriptionIngestor(@Value("${daily.transcriptions.path}") String dailyTranscriptionsPath,
                                       DataExtractorAgent dataExtractorAgent,
-                                      OllamaEmbeddingModel ollamaEmbeddingModel,
+                                      VoyageEmbeddingModel voyageEmbeddingModel,
                                       PgVectorStore pgVectorStore) {
         this.dailyTranscriptionsPath = dailyTranscriptionsPath;
         this.dataExtractorAgent = dataExtractorAgent;
-        this.retriever = new Retriever(ollamaEmbeddingModel, pgVectorStore, 100);
+        this.retriever = new Retriever(voyageEmbeddingModel, pgVectorStore, 100);
     }
 
     /**

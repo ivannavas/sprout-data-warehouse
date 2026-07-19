@@ -1,8 +1,8 @@
 package io.github.ivannavas.sprout_data_warehouse.agent;
 
 import io.github.ivannavas.sprout.annotation.Agent;
-import io.github.ivannavas.sprout.ollama.embedding.OllamaEmbeddingModel;
-import io.github.ivannavas.sprout.ollama.executor.OllamaModelExecutor;
+import io.github.ivannavas.sprout.anthropic.embedding.VoyageEmbeddingModel;
+import io.github.ivannavas.sprout.anthropic.executor.AnthropicModelExecutor;
 import io.github.ivannavas.sprout.pgvector.PgVectorStore;
 import io.github.ivannavas.sprout_data_warehouse.service.ActivityService;
 import io.github.ivannavas.sprout_data_warehouse.service.DaySummaryService;
@@ -13,9 +13,9 @@ import io.github.ivannavas.sprout_data_warehouse.service.ProjectService;
 import io.github.ivannavas.sprout_data_warehouse.tool.DatabaseWriter;
 
 @Agent(
-        model = OllamaModelExecutor.class,
+        model = AnthropicModelExecutor.class,
         vectorStore = PgVectorStore.class,
-        embeddingModel = OllamaEmbeddingModel.class,
+        embeddingModel = VoyageEmbeddingModel.class,
         maxIterations = 40,
         systemPrompt = """
                 Eres un extractor de datos. Recibes la transcripción de un día en la que YO hablo en primera persona sobre mi jornada,

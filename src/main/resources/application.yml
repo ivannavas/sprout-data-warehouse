@@ -13,21 +13,31 @@ spring:
       ddl-auto: none
     open-in-view: false
 
-ollama:
+anthropic:
+  api:
+    key: ${ANTHROPIC_API_KEY:}
   model:
-    name: ${OLLAMA_MODEL:llama3.1}
+    name: ${ANTHROPIC_MODEL:claude-opus-4-8}
+  max:
+    tokens: 8192
   timeout:
     seconds: 300
+
+voyage:
+  api:
+    key: ${VOYAGE_API_KEY:}
   embedding:
     model:
-      name: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+      name: ${VOYAGE_EMBEDDING_MODEL:voyage-3}
+  timeout:
+    seconds: 300
 
 pgvector:
   url: ${DB_URL:jdbc:postgresql://localhost:5432/sprout_data_warehouse}
   username: ${DB_USERNAME:postgres}
   password: ${DB_PASSWORD:postgres}
   table: sprout_documents
-  dimension: 768
+  dimension: 1024
 
 daily:
   transcriptions:
