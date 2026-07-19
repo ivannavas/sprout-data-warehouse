@@ -35,6 +35,7 @@ public class DailyTranscriptionIngestor {
     private final String dailyTranscriptionsPath;
     private final DataExtractorAgent dataExtractorAgent;
     private final Retriever retriever;
+    private final ModelUsageTracker usageTracker;
 
     private final AtomicBoolean running = new AtomicBoolean();
     private volatile boolean stopRequested;
@@ -50,9 +51,11 @@ public class DailyTranscriptionIngestor {
     public DailyTranscriptionIngestor(@Value("${daily.transcriptions.path}") String dailyTranscriptionsPath,
                                       DataExtractorAgent dataExtractorAgent,
                                       VoyageEmbeddingModel voyageEmbeddingModel,
-                                      PgVectorStore pgVectorStore) {
+                                      PgVectorStore pgVectorStore,
+                                      ModelUsageTracker usageTracker) {
         this.dailyTranscriptionsPath = dailyTranscriptionsPath;
         this.dataExtractorAgent = dataExtractorAgent;
+        this.usageTracker = usageTracker;
         this.retriever = new Retriever(voyageEmbeddingModel, pgVectorStore, 100);
     }
 
@@ -74,6 +77,7 @@ public class DailyTranscriptionIngestor {
         daysIngested = 0;
         daysDeleted = 0;
         daysFailed = 0;
+        usageTracker.reset();
 
         Thread.ofPlatform().name("daily-transcription-ingestion").start(this::run);
         return true;
@@ -93,6 +97,7 @@ public class DailyTranscriptionIngestor {
             running.set(false);
             log.info("Ingestion {}: {} ingested, {} deleted, {} failed",
                     lastOutcome, daysIngested, daysDeleted, daysFailed);
+            log.info("Model usage: {}", usageTracker.summary());
         }
     }
 

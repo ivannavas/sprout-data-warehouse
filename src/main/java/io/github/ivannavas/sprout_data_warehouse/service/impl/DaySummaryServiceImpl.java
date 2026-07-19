@@ -6,6 +6,7 @@ import io.github.ivannavas.sprout_data_warehouse.service.DaySummaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -27,5 +28,15 @@ public class DaySummaryServiceImpl implements DaySummaryService {
     @Override
     public List<DaySummary> getAllDaySummaries() {
         return daySummaryRepository.findAll();
+    }
+
+    @Override
+    public DaySummary getDaySummaryByDate(LocalDate date) {
+        return date == null ? null : daySummaryRepository.findByDate(date).orElse(null);
+    }
+
+    @Override
+    public List<LocalDate> getRecordedDates() {
+        return daySummaryRepository.findAllDates();
     }
 }

@@ -26,7 +26,11 @@ import io.github.ivannavas.sprout_data_warehouse.tool.DatabaseWriter;
 
                 PROCEDIMIENTO (síguelo en este orden):
                 1. Lee la transcripción entera e identifica qué entidades aparecen.
-                2. Para cada tipo de entidad que vayas a guardar, llama PRIMERO a su herramienta findAll... para ver qué hay ya registrado.
+                2. Para cada tipo de entidad que vayas a guardar, consulta PRIMERO lo que ya hay registrado.
+                   Las herramientas findAll... devuelven la lista completa. Las demás piden un dato para acotar
+                   la búsqueda: findDatedActivitiesByDate y findDatedFeelingsByDate reciben la fecha que vas a
+                   registrar, y findPersonEventsByPerson el id de la persona. Consulta con el mismo dato que vas
+                   a guardar: si vas a registrar una actividad del 2026-03-04, pregunta por esa fecha.
                 3. Decide para cada dato si es nuevo (crear) o si ya existe (actualizar).
                 4. Llama a las herramientas save... correspondientes.
                 5. Termina SIEMPRE guardando el resumen del día con saveDaySummary.
@@ -52,7 +56,7 @@ import io.github.ivannavas.sprout_data_warehouse.tool.DatabaseWriter;
                 ENTIDADES:
                 - Person (savePerson / findAllPersons): una persona que menciono. Puedo nombrarla por su nombre o por la relación que nos une
                   ("mi hermana", "mi jefe"). description es quién es; history es lo que se va sabiendo de ella a lo largo del tiempo.
-                - PersonEvent (savePersonEvent / findAllPersonEvents): algo que le sucedió a una persona en un periodo determinado
+                - PersonEvent (savePersonEvent / findPersonEventsByPerson): algo que le sucedió a una persona en un periodo determinado
                   (una relación, una enfermedad, un viaje). Necesitas su personId: búscalo con findAllPersons y, si esa persona todavía
                   no existe, créala antes con savePerson.
                 - Group (saveGroup / findAllGroups): un conjunto de personas del que hablo como una unidad (mi familia, el equipo del trabajo,
@@ -62,12 +66,12 @@ import io.github.ivannavas.sprout_data_warehouse.tool.DatabaseWriter;
                   la lista que mandas sustituye a la anterior.
                 - Feeling (saveFeeling / findAllFeelings): un sentimiento que menciono, directa o indirectamente, con su descripción general
                   y howILiveIt, que es cómo lo vivo yo en términos generales.
-                - DatedFeeling (saveDatedFeeling / findAllDatedFeelings): la vivencia concreta de un sentimiento en una fecha: cómo lo viví
+                - DatedFeeling (saveDatedFeeling / findDatedFeelingsByDate): la vivencia concreta de un sentimiento en una fecha: cómo lo viví
                   ese día. Necesita el feelingId del Feeling correspondiente, que debe existir antes.
                 - Event (saveEvent / findAllEvents): un evento importante mío (viajes, enfermedades, relaciones...), con fecha de inicio y fin.
                 - Activity (saveActivity / findAllActivities): una actividad habitual que hago, sin el peso de un evento (entrenar, leer, cocinar).
                   La Activity se registra una sola vez; cada vez que la hago se añade además un DatedActivity.
-                - DatedActivity (saveDatedActivity / findAllDatedActivities): la realización de una actividad en una fecha concreta.
+                - DatedActivity (saveDatedActivity / findDatedActivitiesByDate): la realización de una actividad en una fecha concreta.
                   Necesita el activityId de la Activity correspondiente, que debe existir antes.
                 - Project (saveProject / findAllProjects): un proyecto que menciono haber empezado o terminado, con fecha de inicio y de fin.
                   Ve completando su nombre y su descripción a medida que doy más detalles en días sucesivos.

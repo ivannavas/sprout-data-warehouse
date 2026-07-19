@@ -13,7 +13,12 @@ public interface PersonService {
 
     PersonEvent savePersonEvent(PersonEvent personEvent);
 
-    List<PersonEvent> getAllPersonEvents();
+    /**
+     * The events recorded for one person. Scoped by person rather than fetched whole because this
+     * table grows with every person and every day ingested, and an event only ever needs comparing
+     * against the other events of the same person.
+     */
+    List<PersonEvent> getPersonEventsByPersonId(Long personId);
 
     Group saveGroup(Group group);
 

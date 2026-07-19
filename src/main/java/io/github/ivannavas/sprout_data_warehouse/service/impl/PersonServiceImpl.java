@@ -36,8 +36,8 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public List<PersonEvent> getAllPersonEvents() {
-        return personEventRepository.findAll();
+    public List<PersonEvent> getPersonEventsByPersonId(Long personId) {
+        return personId == null ? List.of() : personEventRepository.findByPersonId(personId);
     }
 
     @Override

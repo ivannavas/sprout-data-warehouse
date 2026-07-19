@@ -8,6 +8,7 @@ import io.github.ivannavas.sprout_data_warehouse.service.FeelingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,7 +34,7 @@ public class FeelingServiceImpl implements FeelingService {
     }
 
     @Override
-    public List<DatedFeeling> getAllDatedFeelings() {
-        return datedFeelingRepository.findAll();
+    public List<DatedFeeling> getDatedFeelingsByDate(LocalDate date) {
+        return date == null ? List.of() : datedFeelingRepository.findByDate(date);
     }
 }

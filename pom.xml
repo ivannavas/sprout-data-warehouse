@@ -42,19 +42,19 @@
         <dependency>
             <groupId>io.github.ivannavas</groupId>
             <artifactId>sprout-spring-boot-starter</artifactId>
-            <version>1.8.0</version>
+            <version>1.9.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.ivannavas</groupId>
             <artifactId>sprout-anthropic</artifactId>
-            <version>1.8.0</version>
+            <version>1.9.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.ivannavas</groupId>
             <artifactId>sprout-pgvector</artifactId>
-            <version>1.8.0</version>
+            <version>1.9.0</version>
         </dependency>
 
         <dependency>

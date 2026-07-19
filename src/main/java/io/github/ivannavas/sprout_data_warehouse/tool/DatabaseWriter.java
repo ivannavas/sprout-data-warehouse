@@ -19,7 +19,6 @@ import io.github.ivannavas.sprout_data_warehouse.service.FeelingService;
 import io.github.ivannavas.sprout_data_warehouse.service.PersonService;
 import io.github.ivannavas.sprout_data_warehouse.service.ProjectService;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,9 +121,5 @@ public class DatabaseWriter extends DatabaseReader {
             @ToolParam(description = "Fecha del día resumido, en formato yyyy-MM-dd", required = true) String date,
             @ToolParam(description = "Resumen en prosa de lo que ocurrió ese día", required = true) String summary) {
         daySummaryService.saveDaySummary(new DaySummary(null, parseDate(date), summary));
-    }
-
-    protected static LocalDate parseDate(String date) {
-        return date == null || date.isBlank() ? null : LocalDate.parse(date.trim());
     }
 }

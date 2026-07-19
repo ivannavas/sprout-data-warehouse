@@ -22,13 +22,17 @@ anthropic:
     tokens: 8192
   timeout:
     seconds: 300
+  # Cada iteración del agente reenvía el prompt de sistema, los 19 esquemas de herramientas y la
+  # conversación acumulada. Sin caché el backfill paga todo eso entero en cada llamada.
+  cache:
+    enabled: true
 
 voyage:
   api:
     key: ${VOYAGE_API_KEY:}
   embedding:
     model:
-      name: ${VOYAGE_EMBEDDING_MODEL:voyage-3}
+      name: ${VOYAGE_EMBEDDING_MODEL:voyage-4}
   timeout:
     seconds: 300
 

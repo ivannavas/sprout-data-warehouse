@@ -8,6 +8,7 @@ import io.github.ivannavas.sprout_data_warehouse.service.ActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,7 +34,7 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public List<DatedActivity> getAllDatedActivities() {
-        return datedActivityRepository.findAll();
+    public List<DatedActivity> getDatedActivitiesByDate(LocalDate date) {
+        return date == null ? List.of() : datedActivityRepository.findByDate(date);
     }
 }
