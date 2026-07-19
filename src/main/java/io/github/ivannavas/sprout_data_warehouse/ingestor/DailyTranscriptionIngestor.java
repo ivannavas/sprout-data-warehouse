@@ -8,9 +8,6 @@ import io.github.ivannavas.sprout.pgvector.PgVectorStore;
 import io.github.ivannavas.sprout.rag.Retriever;
 import io.github.ivannavas.sprout_data_warehouse.agent.DataExtractorAgent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,12 +56,15 @@ public class DailyTranscriptionIngestor {
         this.retriever = new Retriever(ollamaEmbeddingModel, pgVectorStore, 100);
     }
 
-    @Scheduled(cron = "0 0 13 * * *")
-    @EventListener(ApplicationReadyEvent.class)
-    public void scheduledTask() {
+    /**
+     * Claims the run and hands it to a thread of its own: a full pass walks every pending day through the
+     * extractor, which is far longer than a request should be held open. Returns false when a run is already
+     * in progress, leaving that run untouched.
+     */
+    public boolean start() {
         if (!running.compareAndSet(false, true)) {
-            log.info("Ingestion already in progress; skipping this trigger");
-            return;
+            log.info("Ingestion already in progress; ignoring start request");
+            return false;
         }
 
         stopRequested = false;
@@ -75,6 +75,12 @@ public class DailyTranscriptionIngestor {
         daysDeleted = 0;
         daysFailed = 0;
 
+        Thread.ofPlatform().name("daily-transcription-ingestion").start(this::run);
+        return true;
+    }
+
+    /** Runs the pass already claimed by {@link #start()}, and releases the claim when it ends. */
+    private void run() {
         try {
             walk();
             lastOutcome = stopRequested ? IngestionStatus.Outcome.STOPPED : IngestionStatus.Outcome.COMPLETED;

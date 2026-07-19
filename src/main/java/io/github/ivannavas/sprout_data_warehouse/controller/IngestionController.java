@@ -22,6 +22,13 @@ public class IngestionController {
         return ingestor.status();
     }
 
+    @PostMapping("/start")
+    public ResponseEntity<IngestionStatus> start() {
+        boolean started = ingestor.start();
+        return ResponseEntity.status(started ? HttpStatus.ACCEPTED : HttpStatus.CONFLICT)
+                .body(ingestor.status());
+    }
+
     @PostMapping("/stop")
     public ResponseEntity<IngestionStatus> stop() {
         boolean stopping = ingestor.requestStop();
